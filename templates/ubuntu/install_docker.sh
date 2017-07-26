@@ -3,10 +3,13 @@
 # TBD
 # Add instllation of fail2ban
 # Addinstllation and configuration of dnsmasq as cache.
+export SCRIPT=$(readlink -f "$0")
+export SCRIPT_NAME=$(basename ${SCRIPT})
+export SCRIPT_DIR=$(dirname ${SCRIPT})
 _sudo=${SUDO_PATH:-'/usr/bin/sudo'}
 if [ "$(id -u)" != "0" ]; then
-    $_sudo $0 $@
-    exit 0
+    [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "RESTARTING SCRIPT WITH SUDO: $_sudo $0 $@"
+    exec $_sudo $0 $@
 fi
 
 export DEBIAN_FRONTEND=noninteractive

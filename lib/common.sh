@@ -98,6 +98,16 @@ function makedir {
   fi
 }
 
+function make_password {
+  # Arguments variable int
+  # Use openssl to generate a password of base64 characters.
+  local _var=$1
+  assert_var _var
+  local _len=${2:-32}
+  local $_val=$(openssl rand -base64 $_len | tr -d '[:space:]' | head -c${1:-${$_len}})
+  eval "export ${_var}=${_val}"
+}
+
 function add_password {
   # Arguments: hostname username password
   # Services behind nginx-proxy can be given basic authentication at the
@@ -113,7 +123,7 @@ function add_password {
   assert_var _password
 
   passwdfile="$NGINX_PROXY_ROOT/htpasswd/${_hostname}"
-  docker run --rm --entrypoint htpasswd registry:2 -bn $_username $_password >> $passwdfile
+  docker run --rm --entrypoint htpasswd registry:2 -Bbn $_username $_password >> $passwdfile
   assert_file $passwdfile
 }
 
@@ -409,8 +419,7 @@ function withsudo {
   local _sudo=${SUDO_PATH:-'/usr/bin/sudo'}
   if [ "$(id -u)" != "0" ]; then
       [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "RESTARTING SCRIPT WITH SUDO: $_sudo $0 $@"
-      $_sudo $0 $@
-      exit 0
+      exec $_sudo $0 $@
   fi
 }
 

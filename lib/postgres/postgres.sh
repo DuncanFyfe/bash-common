@@ -2,10 +2,10 @@ function postgres_add_initdb {
   # Arguments: template_file additional_template_variables ...
   # Requires:
   #   POSTGRES_SRC_INITDB = Directory of source template
-  #   POSTGRES_HOST_INITDB = Host directory which will be mounted on container
+  #   POSTGRES_HOST_INITDB = Host directory which will be mounted in container
   #     at /docker-entrypoint-initdb.d
   #
-  # The dockerized postgresql runs scripts in the /docker-entrypoint-initdb.d
+  # The dockerized postgresql runs the scripts in /docker-entrypoint-initdb.d
   # to initialize itself.  Copy a source template into the host folder,
   # apply template substitution and make the script executable (it is assumed
   # to be a shell script but this should not cause problems with sql
@@ -37,7 +37,11 @@ function postgres_exec_initdb {
     #     at /docker-entrypoint-initdb.d
     #   POSTGRES_NAME = Name of the postgresql container to exec this script on.
     # POSTGRES_CONT_INITDB is the directory of the script in the container.
-    # Notice there are no chekcs here to see if a script has already been run or not.
+    # Notice there are no checks here to see if a script has already been run
+    # or not.
+    # This function allows scripts placed in the container
+    # /docker-entrypoint-initdb.d folder to be executed after the container
+    # has been run.
     local _filename=$1
     assert_var _filename
     # Check the script is on the host

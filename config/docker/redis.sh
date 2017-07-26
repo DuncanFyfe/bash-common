@@ -1,0 +1,6 @@
+export REDIS_VERSION="3"
+export REDIS_DOCKER_IMAGE="redis:${REDIS_VERSION}-alpine"
+export REDIS_NAME="redis-${REDIS_VERSION}"
+export REDIS_ROOT="$HOST_ROOT/${REDIS_NAME}"
+export REDIS_DATA="$REDIS_ROOT/data"
+export REDIS_CONFD="$REDIS_ROOT/etc"

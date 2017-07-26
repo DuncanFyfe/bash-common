@@ -1,0 +1,8 @@
+export ROOT_CA="my_root_ca"
+export INTERMEDIATE_CA="an_intermediate_ca"
+export RKT_ETCD_IMAGE="quay.io/coreos/etcd:v3.1.7"
+export RKT_FLANNELD_IMAGE="quay.io/coreos/flanneld:v0.7.1"
+export HYPERKUBE_IMAGE="quay.io/coreos/hyperkube:v1.6.4_coreos.0"
+export ETCD_CA="$INTER_CA_NAME"
+export FLANNELD_CA="$INTER_CA_NAME"
+export KUBE_CA="$INTER_CA_NAME"

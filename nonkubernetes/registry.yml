@@ -1,0 +1,66 @@
+version: 0.1
+log:
+  accesslog:
+    disabled: false
+  formatter: json
+  level: warn
+  fields:
+    service: registry
+  hooks:
+    - type: mail
+      disabled: false
+      levels:
+        - panic
+      options:
+        smtp:
+          addr: sub5.mail.dreamhost.com:587
+          username: registry@example.com
+          password: InChjZgkmz2w7N6+P9KiFd3FhAiPO
+          insecure: true
+        from: registry@example.
+        to:
+          - admin@example.com
+storage:
+  delete:
+    enabled: true
+  filesystem:
+    rootdirectory: /var/lib/registry
+  cache:
+    blobdescriptor: redis
+  maintenance:
+    uploadpurging:
+      enabled: true
+      age: 168h
+      interval: 24h
+      dryrun: false
+    readonly:
+      enabled: false
+auth:
+  token:
+    realm: example-realm
+    service: token-service
+    issuer: example-registry-token-issuer
+    rootcertbundle: /root/certs/bundle
+redis:
+  addr: ${REGISTRY_REDIS_HOST}:6379
+  db: ${REGISTRY_REDIS_DB}
+  dialtimeout: 10ms
+  readtimeout: 10ms
+  writetimeout: 10ms
+  pool:
+    maxidle: 16
+    maxactive: 64
+    idletimeout: 300s
+http:
+  addr: :5000
+  host: https://registry.example.com
+  secret: xZJ3RUEyCVOGiUiZPqJIazy3TrU90ojC
+  headers:
+    X-Content-Type-Options: [nosniff]
+  http2:
+    enabled: true
+health:
+  storagedriver:
+    enabled: true
+    interval: 600s
+    threshold: 3

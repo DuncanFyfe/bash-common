@@ -8,7 +8,7 @@ export SCRIPT_NAME=$(basename $SCRIPT)
 load 'nodes' 'nodes.sh'
 assert_directory $BUID_ROOT
 #nodes=$(echo "$UBUNTU_NODES" | tr ',' '\n' | sort -u | tr '\n' ' ')
-nodes="do-1gb-fra1-01.domenlas.com"
+nodes="192.168.122.109"
 template_name='root_bootstrap.sh'
 
 _destdir=$(basename $PROJECT_ROOT)

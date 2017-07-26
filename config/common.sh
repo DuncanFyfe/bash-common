@@ -44,13 +44,15 @@ CERT_STATE=""
 CERT_ORGANIZATION=""
 CERT_ORGANIZATION_UNIT=""
 # ROOT CA NAME is used for filenames so COMMON_NAME can be more meaningful.
-ROOT_CA_NAME=""
-ROOT_CA_COMMON_NAME=""
+ROOT_CA_NAME="my_root_ca"
+ROOT_CA_COMMON_NAME="My Root CA"
 # INTERMEDIATE CA NAME is used for filenames so COMMON_NAME can be more meaningful.
-INTER_CA_NAME=""
-INTER_CA_COMMON_NAME=""
+INTER_CA_NAME="an_intermediate_ca"
+INTER_CA_COMMON_NAME="An Intermeidate CA"
 
 ###
 ### Default non-root user to use for sudo based installation.
 ###
 ADMINUSER="ubuntu"
+# Use systemd to manage container start/stop.  Valid values are non-emtpy (True) or empty (False)
+USE_SYSTEMD=1

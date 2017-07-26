@@ -1,7 +1,7 @@
 [Unit]
 Description=Docker Container %I
-Requires=${REQUIRES}
-After=${AFTER}
+Requires=__REQUIRES__
+After=__AFTER__
 
 [Service]
 Restart=always

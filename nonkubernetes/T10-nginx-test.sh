@@ -13,7 +13,7 @@ cd $SCRIPT_DIR
 NGINX_TEST_NAME="nginx_test"
 NGINX_TEST_ROOT="$HOST_ROOT/$NGINX_TEST_NAME"
 hosthtml=$NGINX_TEST_ROOT/html
-hostname="do-2gb-fra1-01.domenlas.com"
+hostname="do-2gb-fra1-01.example.com"
 
 for dir in $NGINX_TEST_ROOT $hosthtml; do
   makedir $dir
@@ -38,7 +38,7 @@ rm_container $NGINX_TEST_NAME
 docker run --name $NGINX_TEST_NAME --log-driver=journald \
   -e "VIRTUAL_HOST=$hostname" \
   -e "LETSENCRYPT_HOST=$hostname" \
-  -e "LETSENCRYPT_EMAIL=accounts@domenlas.com" \
+  -e "LETSENCRYPT_EMAIL=accounts@example.com" \
   -v $hosthtml:/usr/share/nginx/html:ro \
   -d nginx:alpine
 
