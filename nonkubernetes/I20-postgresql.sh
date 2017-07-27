@@ -13,14 +13,9 @@ fi
 . $SCRIPT_DIR/project.sh
 
 load 'docker' 'docker.sh'
-load 'docker' 'postgres.sh'
-load 'yesod' 'postgres.sh'
+load 'docker' 'postgresql.sh'
+load 'yesod' 'postgresql.sh'
 #load 'gitlab' 'postgresql.sh'
-assert_var POSTGRES_NAME
-assert_var POSTGRES_ROOT
-assert_var POSTGRES_DATA
-assert_var POSTGRES_HOST_INITDB
-assert_var POSTGRES_DOCKER_IMAGE
 cd $SCRIPT_DIR
 
 systemctl stop "docker-container@${POSTGRES_NAME}.service"
@@ -30,14 +25,14 @@ rm_container $POSTGRES_NAME
 if [ "X$POSTGRES_PASSWORD" = 'XAUTOMATICFORTHEPEOPLE' ]; then
   LENGTH=32
   export POSTGRES_PASSWORD=$(openssl rand -base64 $LENGTH | tr -d '[:space:]' | head -c${1:-${LENGTH}})
+  echo "Set POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
 fi
-echo "Set POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
 
 # On first start the database goes into the background and then is too slow to
 # start causing problems with the init scripts.  PG_PAUSE is a configurable
 # pause (sleep) between database start and firing the init scripts.
 # sleep time to wait before firing off DB init scripts.
-export PG_PAUSE="${PG_PAUSE}:-5"
+export PG_PAUSE=${PG_PAUSE:-5}
 
 # GITHUB_* are used in the create-gitlab-db.sh script.
 for dir in $POSTGRES_ROOT $POSTGRES_DATA $POSTGRES_HOST_INITDB; do
