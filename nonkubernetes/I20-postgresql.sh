@@ -76,9 +76,9 @@ assert_container ${POSTGRES_NAME}
 configure_systemd $POSTGRES_NAME "docker.service" "docker.service"
 
 # Postgres runs as the postgres user inside the container.
-# Add a user to the system for the docker postgres pid.
+# Add a user to the host system for the docker postgres pid.
 # This is better for files created on the host.
-if [ "X${ADD_HOST_USER}" != "XFalse" ]; then
+if [ "X${ADD_HOST_USER}" = "XTrue" ]; then
   postgresgid=$(ps -eo gid,args | awk '$2 == "postgres" { print $1 }')
   echo "postgresgid=$postgresgid"
   if [ "X$postgresgid" != "X" ]; then
@@ -105,9 +105,6 @@ if [ "X${ADD_HOST_USER}" != "XFalse" ]; then
         echo "[WARN] USER $userexists with docker-postgres UID ${postgresuid} already exists."
     fi
     assert_user 'postgres'
-  fi
-
-
   fi
 fi
 enable_systemd "docker-container@${POSTGRES_NAME}.service"
