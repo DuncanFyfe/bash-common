@@ -124,6 +124,9 @@ if [ "X${ADD_HOST_USER}" = "XTrue" ]; then
         echo "[WARN] USER $userexists with docker-postgres UID ${postgresuid} already exists."
     fi
     assert_user 'postgres'
+    # Fix ownership and permissions on the init scripts from the host perspective
+    chown postgres:postgres $POSTGRES_HOST_INITDB/*
+    chmod go-x $POSTGRES_HOST_INITDB/*
   fi
 fi
 echo ""
