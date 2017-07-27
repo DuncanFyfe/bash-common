@@ -56,6 +56,11 @@ if [ "X$POSTGRES_INITDB_SCRIPTS" != "X" ]; then
   done
 fi
 
+echo "docker run --name ${POSTGRES_NAME} --log-driver=journald \
+  --env "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" $POSTGRES_DOCKER_RUN \
+  -v ${POSTGRES_DATA}:/var/lib/postgresql/data \
+  -v ${POSTGRES_HOST_INITDB}:${POSTGRES_CONT_INITDB}:ro \
+  -d ${POSTGRES_DOCKER_IMAGE}"
 docker run --name ${POSTGRES_NAME} --log-driver=journald \
   --env "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" $POSTGRES_DOCKER_RUN \
   -v ${POSTGRES_DATA}:/var/lib/postgresql/data \
@@ -65,12 +70,14 @@ docker run --name ${POSTGRES_NAME} --log-driver=journald \
 echo "Pause for DB to come up..."
 sleep $PG_PAUSE
 # Get postgres client
+echo "#"
 echo "# To get a psql client connection to the new container:"
-echo "docker run -it --rm --link $POSTGRES_NAME:postgres postgres psql -h postgres -U postgres"
+echo "docker run -it --rm --link $POSTGRES_NAME:postgres ${POSTGRES_DOCKER_IMAGE} psql -h postgres -U postgres"
 echo "# To get shell access for debugging try (alpine does not include bash!):"
 echo "docker exec -it $POSTGRES_NAME /bin/sh"
 echo "To execute commands on the database after init:"
-echo "docker exec -it postgresql /bin/sh -c 'echo \"SELECT datname FROM pg_database WHERE datistemplate = false;\" | psql -U postgres'"
+echo "docker exec -it $POSTGRES_NAME /bin/sh -c 'echo \"SELECT datname FROM pg_database WHERE datistemplate = false;\" | psql -U postgres'"
+echo "#"
 
 assert_container ${POSTGRES_NAME}
 configure_systemd $POSTGRES_NAME "docker.service" "docker.service"
@@ -107,7 +114,8 @@ if [ "X${ADD_HOST_USER}" = "XTrue" ]; then
     assert_user 'postgres'
   fi
 fi
-enable_systemd "docker-container@${POSTGRES_NAME}.service"
+echo ""
+enable_systemd ${POSTGRES_NAME}
 
 # Sleep twice the PG_PAUSE time to give the DB time to come up.
 docker logs $POSTGRES_NAME
