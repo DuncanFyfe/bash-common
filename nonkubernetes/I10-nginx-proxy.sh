@@ -5,6 +5,7 @@ export SCRIPT_NAME=$(basename $SCRIPT)
 [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "SCRIPT BEGIN $SCRIPT_NAME ${@:1}"
 
 if [ "$(id -u)" != "0" ]; then
+    _sudo=${SUDO_PATH:-'/usr/bin/sudo'}
     [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "RESTARTING SCRIPT WITH SUDO: $_sudo $0 $@"
     exec $_sudo $0 $@
 fi

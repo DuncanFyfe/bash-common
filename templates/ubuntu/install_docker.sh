@@ -6,7 +6,6 @@
 export SCRIPT=$(readlink -f "$0")
 export SCRIPT_NAME=$(basename ${SCRIPT})
 export SCRIPT_DIR=$(dirname ${SCRIPT})
-_sudo=${SUDO_PATH:-'/usr/bin/sudo'}
 
 dist='Ubunut'
 distver='16.04'
@@ -18,6 +17,7 @@ if [ "X$distcheck" != "X1" -a "X$distvercheck" != "X1" ]; then
 fi
 
 if [ "$(id -u)" != "0" ]; then
+    _sudo=${SUDO_PATH:-'/usr/bin/sudo'}
     [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "RESTARTING SCRIPT WITH SUDO: $_sudo $0 $@"
     exec $_sudo $0 $@
 fi
