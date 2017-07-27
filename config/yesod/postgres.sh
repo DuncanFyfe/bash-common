@@ -21,3 +21,4 @@ export POSTGRES_INITDB_SCRIPTS="I10-begin.sh I20-init-yesod-db.sh"
 # Additional docker run arguments.
 export POSTGRES_TEMPLATE_VARS="PGUSER PGPASS PGDATABASE"
 export POSTGRES_DOCKER_RUN="-e \"PGUSER=$PGUSER\" -e \"PGPASS=$PGPASS\" -e \"PGDATABASE=$PGDATABASE\""
+export ADD_HOST_USER="True"

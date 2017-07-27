@@ -79,7 +79,7 @@ configure_systemd $POSTGRES_NAME "docker.service" "docker.service"
 # Add a user to the system for the docker postgres pid.
 # This is better for files created on the host.
 ADD_USER="False"
-if [ "X${ADD_USER}" != "XFalse" ]; then
+if [ "X${ADD_HOST_USER}" != "XFalse" ]; then
   postgresuid=$(ps -eo uid,args | awk '$2 == "postgres" { print $1 }')
   echo "postgresuid=$postgresuid"
   if [ "X$postgresuid" != "X" ]; then
