@@ -423,6 +423,14 @@ function withsudo {
   fi
 }
 
+function distcheck {
+  # Get the timestamp creating one if needed.
+  local _var=$1
+  assert_var _var
+  local _dist=$2
+  local _val=$(uname -a | grep -c $_dist)
+  eval "export ${_var}=${_val}"
+}
 # ERROR EXIT STATUSES
 ERR_CA_UNCLEAN=1
 ERR_CA_NAME=2

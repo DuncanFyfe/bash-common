@@ -12,6 +12,15 @@ export SCRIPT_NAME=$(basename $SCRIPT)
 [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "SCRIPT BEGIN $SCRIPT_NAME $(hostname) ${@:1}"
 cd $SCRIPT_DIR
 
+dist='Ubunut'
+distver='16.04'
+distcheck=$(uname -a | grep -c $dist)
+distvercheck=$(uname -a | grep -c $distver)
+if [ "X$distcheck" != "X1" -a "X$distvercheck" != "X1" ]; then
+  echo "[ERROR] $SCRIPT is for $dist version $distver.  Exiting."
+  exit 99
+fi
+
 # The ADMINUSER must be the same as in the script config.sh file.
 export ADMINUSER="ubuntu"
 export DEBIAN_FRONTEND=noninteractive;
