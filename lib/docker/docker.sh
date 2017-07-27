@@ -63,7 +63,7 @@ function rm_container {
       docker stop $_n
       docker rm $_n
       local _check
-      has_container $_check $_n
+      has_container _has_container $_n
       if [ "X$_check" != "X" ]; then
         error $ERR_BAD_CONTAINER "Removing container $_n failed."
       fi
