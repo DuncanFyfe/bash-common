@@ -17,7 +17,7 @@ function postgres_add_initdb {
     local _template=$1
     assert_var _template
     local _init=$(basename $_template)
-    local _src=$POSTGRES_SRC_INITDB/$_init
+    get_template _src 'docker' $_init
     local _dest=$POSTGRES_HOST_INITDB/$_init
     echo "\$_src=$_src"
     echo "\$_dest=$_dest"
@@ -26,7 +26,9 @@ function postgres_add_initdb {
       cp $_src $_dest
       assert_file $_dest
       template_substitution $_dest 'POSTGRES_PASSWORD' 'POSTGRES_VERSION' 'PG_PAUSE' ${@:2}
-      chmod u+rx $_dest
+      # The the point these are run we may have mixed root/postgres happenings.
+      # Expose with wider permissions then fix up later.
+      chmod a+rx $_dest
     fi
 }
 
