@@ -78,18 +78,33 @@ configure_systemd $POSTGRES_NAME "docker.service" "docker.service"
 # Postgres runs as the postgres user inside the container.
 # Add a user to the system for the docker postgres pid.
 # This is better for files created on the host.
-ADD_USER="False"
 if [ "X${ADD_HOST_USER}" != "XFalse" ]; then
+  postgresgid=$(ps -eo gid,args | awk '$2 == "postgres" { print $1 }')
+  echo "postgresgid=$postgresuid"
+  if [ "X$postgresgid" != "X" ]; then
+    groupexists=$(getent group $postgresgid | cut -d: -f1 )
+    if [ "X$groupexists" = "X" ]; then
+      addgroup --gid $postgresgid postgres
+    else
+      echo "[WARN] Group $groupexists with docker-postgres GID ${postgresgid} already exists."
+    fi
+    assert_group 'postgres'
+  fi
+
   postgresuid=$(ps -eo uid,args | awk '$2 == "postgres" { print $1 }')
   echo "postgresuid=$postgresuid"
   if [ "X$postgresuid" != "X" ]; then
-    postgresgid=$(ps -eo gid,args | awk '$2 == "postgres" { print $1 }')
-    userexists=$(getent passwd $postgresuid)
+    userexists=$(getent passwd $postgresuid | cut -d: -f1)
     if [ "X$userexists" = "X" ]; then
-      addgroup --gid $postgresgid postgres
       adduser --system --uid=$postgresuid --gid $postgresgid \
-      --home $POSTGRES_ROOT --disabled-login --disable-password postgres
+    --home $POSTGRES_ROOT --disabled-login --disabled-password postgres
+    else
+        echo "[WARN] USER $userexists with docker-postgres UID ${postgresuid} already exists."
     fi
+    assert_user 'postgres'
+  fi
+
+
   fi
 fi
 enable_systemd "docker-container@${POSTGRES_NAME}.service"

@@ -86,6 +86,30 @@ function assert_exists {
   fi
 }
 
+function assert_user {
+  # Test if the given group exists (but we don't care what it is)
+  # Exit with status $ERR_ASSERT_USER  if it is not.
+  local _u="$1"
+  debugenv 'assert_user' _u
+  assert_var _u
+  local _e=$(getent passwd $_u)
+  if [ "X${_e}" = "X" ]; then
+    error $ERR_ASSERT_USER "Failed assert user: ${_u}"
+  fi
+}
+
+function assert_group {
+  # Test if the given user exists (but we don't care what it is)
+  # Exit with status $ERR_ASSERT_GROUP if it is not.
+  local _g="$1"
+  debugenv 'assert_user' _g
+  assert_var _g
+  local _e=$(getent group $_g)
+  if [ "X${_e}" = "X" ]; then
+    error $ERR_ASSERT_GROUP "Failed assert group: ${_g}"
+  fi
+}
+
 function makedir {
   # Create a directory path then verify that is was created.
   local _d="$1"
@@ -438,6 +462,8 @@ ERR_ASSERT_FILE=10
 ERR_ASSERT_DIRECTORY=11
 ERR_ASSERT_EXISTS=12
 ERR_ASSERT_VAR=13
+ERR_ASSERT_USER=14
+ERR_ASSERT_GROUP=15
 ERR_CERT_PROFILE=20
 ERR_COMMON_NAME=21
 ERR_VERIFY_CA=22
