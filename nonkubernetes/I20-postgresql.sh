@@ -56,16 +56,28 @@ if [ "X$POSTGRES_INITDB_SCRIPTS" != "X" ]; then
   done
 fi
 
-echo "docker run --name ${POSTGRES_NAME} --log-driver=journald \
+#PUBLISH_DOCKER_PORTS
+publish_ports=$(echo "$PUBLISH_DOCKER_PORTS" | tr ',' '\n' | sort -u | tr '\n' ' ')
+for p in $publish_ports; do
+  PUBLISH_PORTS="-p $p ${PUBLISH_PORTS}"
+done
+
+echo "docker run --name ${POSTGRES_NAME} --log-driver=journald $PUBLISH_PORTS \
   --env "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" $POSTGRES_DOCKER_RUN \
   -v ${POSTGRES_DATA}:/var/lib/postgresql/data \
   -v ${POSTGRES_HOST_INITDB}:${POSTGRES_CONT_INITDB}:ro \
   -d ${POSTGRES_DOCKER_IMAGE}"
-docker run --name ${POSTGRES_NAME} --log-driver=journald \
+docker run --name ${POSTGRES_NAME} --log-driver=journald $PUBLISH_PORTS \
   --env "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" $POSTGRES_DOCKER_RUN \
   -v ${POSTGRES_DATA}:/var/lib/postgresql/data \
   -v ${POSTGRES_HOST_INITDB}:${POSTGRES_CONT_INITDB}:ro \
   -d ${POSTGRES_DOCKER_IMAGE}
+
+open_ufw_ports=$(echo "$OPEN_UFW_PORTS" | tr ',' '\n' | sort -u | tr '\n' ' ')
+for p in $open_ufw_ports; do
+  echo "ufw allow $p"
+  ufw allow $p
+done
 
 echo "Pause for DB to come up..."
 sleep $PG_PAUSE
