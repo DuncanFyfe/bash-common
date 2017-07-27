@@ -92,14 +92,13 @@ else
 fi
 
 # Ensure firewall is open for ssh.
-if [ $(ufw status | grep -c OpenSSH) -gt 0 ]; then
+if [ $(ufw status | grep -c OpenSSH) -eq 0 ]; then
   echo "Allowing OpenSSH through firewall."
   ufw allow OpenSSH
-fi
-
-# Enable firewall but only if ssh hole exists.
-if [ $(ufw status | grep -c 'Status: inactive') -gt 0 -a $(ufw status | grep -c OpenSSH) -gt 0 ]; then
-  echo "Enabling firewall."
-  ufw enable
+  # Enable firewall but only if ssh hole exists.
+  if [ $(ufw status | grep -c 'Status: inactive') ]; then
+    echo "Enabling firewall."
+    ufw enable
+  fi
 fi
 [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "SCRIPT END $SCRIPT_NAME $(hostname) ${@:1}"
