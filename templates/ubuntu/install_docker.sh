@@ -1,8 +1,8 @@
 #!/bin/bash
 # Install docker on an ubuntu node.
-# TBD
+# TBD:
 # Add instllation of fail2ban
-# Addinstllation and configuration of dnsmasq as cache.
+# Add instllation and configuration of dnsmasq as cache.
 export SCRIPT=$(readlink -f "$0")
 export SCRIPT_NAME=$(basename ${SCRIPT})
 export SCRIPT_DIR=$(dirname ${SCRIPT})

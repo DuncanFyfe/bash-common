@@ -12,6 +12,10 @@ By default systemd is used to manage the containers rather than docker because
 it brings sanity to managing dependencies between docker services and host
 services.
 
+## Setup
+
+The docker services are placed under HOST_ROOT.
+
 ## NGINX proxy
 
 ### Description
