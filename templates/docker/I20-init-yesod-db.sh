@@ -8,6 +8,10 @@
 # PGDATABASE = The name of the database to which the yesod-postgres is
 # configured to connect
 # These mirror the environment variables in the yesod-postgres settings file.
+export SCRIPT=$(readlink -f "$0")
+export SCRIPT_DIR=$(dirname $SCRIPT)
+export SCRIPT_NAME=$(basename $SCRIPT)
+echo "BEGIN $script"
 
 echo "CREATE USER ${PGUSER}"
 psql -v ON_ERROR_STOP=1 --username "postgres" -tc "SELECT 1 FROM   pg_catalog.pg_user WHERE  usename = '${PGUSER}';" | grep -q 1 || psql -v ON_ERROR_STOP=1 --username "postgres" -c "CREATE USER ${PGUSER} WITH UNENCRYPTED PASSWORD '${PGPASS}';"
@@ -21,3 +25,5 @@ echo "EXTENSION pg_trgm"
 psql -v ON_ERROR_STOP=1 --username "postgres" -d ${PGDATABASE} -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 echo "EXTENSION unaccent"
 psql -v ON_ERROR_STOP=1 --username "postgres" -d ${PGDATABASE}  -c "CREATE EXTENSION IF NOT EXISTS unaccent;"
+
+echo "END $script"
