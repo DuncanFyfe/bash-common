@@ -80,7 +80,7 @@ configure_systemd $POSTGRES_NAME "docker.service" "docker.service"
 # This is better for files created on the host.
 if [ "X${ADD_HOST_USER}" != "XFalse" ]; then
   postgresgid=$(ps -eo gid,args | awk '$2 == "postgres" { print $1 }')
-  echo "postgresgid=$postgresuid"
+  echo "postgresgid=$postgresgid"
   if [ "X$postgresgid" != "X" ]; then
     groupexists=$(getent group $postgresgid | cut -d: -f1 )
     if [ "X$groupexists" = "X" ]; then
