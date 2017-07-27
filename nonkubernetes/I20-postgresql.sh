@@ -13,10 +13,20 @@ fi
 . $SCRIPT_DIR/project.sh
 
 load 'docker' 'docker.sh'
-load 'docker' 'postgresql.sh'
-load 'yesod' 'postgresql.sh'
+load 'docker' 'postgres.sh'
+load 'yesod' 'postgres.sh'
 #load 'gitlab' 'postgresql.sh'
+#
+assert_var POSTGRES_NAME
+assert_var POSTGRES_ROOT
+assert_var POSTGRES_DATA
+assert_var POSTGRES_HOST_INITDB
+assert_var POSTGRES_DOCKER_IMAGE
+assert_var POSTGRES_CONT_INITDB
+
 cd $SCRIPT_DIR
+
+
 
 systemctl stop "docker-container@${POSTGRES_NAME}.service"
 rm_container $POSTGRES_NAME
