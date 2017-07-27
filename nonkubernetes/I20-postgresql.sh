@@ -96,8 +96,11 @@ if [ "X${ADD_HOST_USER}" != "XFalse" ]; then
   if [ "X$postgresuid" != "X" ]; then
     userexists=$(getent passwd $postgresuid | cut -d: -f1)
     if [ "X$userexists" = "X" ]; then
+      POSTGRES_HOME=${POSTGRES_HOME:-"$POSTGRES_ROOT/home"}
+      makedir $POSTGRES_HOME
+      chown "$postgresuid:$postgresgid" $POSTGRES_HOME
       adduser --system --uid=$postgresuid --gid $postgresgid \
-    --home $POSTGRES_ROOT --disabled-login --disabled-password postgres
+    --home $POSTGRES_HOME --disabled-login --disabled-password postgres
     else
         echo "[WARN] USER $userexists with docker-postgres UID ${postgresuid} already exists."
     fi
