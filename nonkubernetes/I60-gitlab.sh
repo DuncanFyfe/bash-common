@@ -13,8 +13,8 @@ load 'docker' 'registry.sh'
 load 'gitlab' 'gitlab.sh'
 cd $SCRIPT_DIR
 
-assert_container $REDIS_NAME
-assert_container $POSTGRES_NAME
+assert_docker_container $REDIS_NAME
+assert_docker_container $POSTGRES_NAME
 export GITLAB_DATA="${GITLAB_ROOT}/data"
 export GITLAB_CONF="${GITLAB_ROOT}/config"
 export GITLAB_LOGS="${GITLAB_ROOT}/logs"
@@ -55,6 +55,6 @@ docker run --name $GITLAB_NAME --log-driver=journald \
   --volume $GITLAB_REGISTRY:/var/opt/registry \
   -d ${GITLAB_DOCKER_IMAGE}
 
-assert_container $GITLAB_NAME
+assert_docker_container $GITLAB_NAME
 configure_systemd $GITLAB_NAME "docker-container@${REGISTRY_NAME}.service" "docker-container@${REGISTRY_NAME}.service"
 #enable_systemd $GITLAB_NAME

@@ -1,5 +1,7 @@
 #!/bin/bash
-# TBD: Documentation
+# First thing to do after checking out the project is to initilize build and
+# distribution directories
+
 export SCRIPT=$(readlink -f "$0")
 export SCRIPT_DIR=$(dirname $SCRIPT)
 export SCRIPT_NAME=$(basename $SCRIPT)
@@ -16,8 +18,11 @@ for d in $BUILD_ROOT $BUILD_PATH $BUILD_LOG $BUILD_RUN $BUILD_TMP $BUILD_LIB $BU
   makedir $d
 done
 
+nodes=${nodes:-$ALL_NODES}
+if [ -z "$nodes" ]; then
+  nodes=$(echo "$@" | tr ',' '\n' | sort -u | tr '\n' ' ')
+fi
 # Make node specific directories
-nodes=$(echo "$ALL_NODES" | tr ',' '\n' | sort -u | tr '\n' ' ')
 for n in $nodes; do
   get_pernode_build _build $n
   makedir $_build

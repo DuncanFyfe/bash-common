@@ -9,7 +9,8 @@ export POSTGRES_DATA="${POSTGRES_ROOT}/data"
 export POSTGRES_SRC_INITDB="$SCRIPT_DIR/docker-entrypoint-initdb.d"
 export POSTGRES_HOST_INITDB="$POSTGRES_ROOT/docker-entrypoint-initdb.d"
 export POSTGRES_CONT_INITDB="/docker-entrypoint-initdb.d"
-export POSTGRES_PASSWORD='ABIGLONGSECRET'
+export POSTGRES_PASSWORD="SE8HHvMbB03UVbaIfESJ7AQ8KTtul+b"
+#export POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-""}
 export POSTGRES_INITDB_ARGS="--data-checksums"
 # initdb scripts to copy to the INIOTDB folder.
 export POSTGRES_INITDB_SCRIPTS="I10-begin.sh"

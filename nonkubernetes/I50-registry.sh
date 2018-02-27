@@ -11,7 +11,7 @@ load 'docker' 'registry.sh'
 
 cd $SCRIPT_DIR
 
-assert_container $REDIS_NAME
+assert_docker_container $REDIS_NAME
 
 for dir in $REGISTRY_ROOT $REGISTRY_DATA $REGISTRY_ETC; do
   makedir $dir
@@ -51,6 +51,6 @@ docker run --name $REGISTRY_NAME --log-driver=journald \
   -v $hostconf:/etc/docker/registry/config.yml:ro \
   -d ${REGISTRY_DOCKER_IMAGE}
 
-assert_container $REGISTRY_NAME
+assert_docker_container $REGISTRY_NAME
 configure_systemd $REGISTRY_NAME "docker-container@${REDIS_NAME}.service" "docker-container@${REDIS_NAME}.service"
 enable_systemd ${REGISTRY_NAME}

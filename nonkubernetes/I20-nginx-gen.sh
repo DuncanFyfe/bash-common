@@ -26,7 +26,7 @@ if [ ! -f "/srv/docker-gen/templates/nginx.tmpl" ]; then
   assert_file $hosttemplate
 fi
 
-assert_container $NGINX_PROXY_NAME
+assert_docker_container $NGINX_PROXY_NAME
 systemctl stop "docker-container@${NGINX_GEN_NAME}.service"
 rm_container $NGINX_GEN_NAME
 

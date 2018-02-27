@@ -20,7 +20,7 @@ load 'docker' 'redis.sh'
 
 cd $SCRIPT_DIR
 
-assert_container $NGINX_LENTENCRYPT_NAME
+assert_docker_container $NGINX_LENTENCRYPT_NAME
 
 for dir in $REDIS_ROOT $REDIS_DATA $REDIS_CONFD; do
   makedir $dir
@@ -43,6 +43,6 @@ docker run --name $REDIS_NAME --log-driver=journald \
   -v $hostconf:/usr/local/etc/redis/redis.conf:ro \
   -d ${REDIS_DOCKER_IMAGE} /usr/local/etc/redis/redis.conf
 
-assert_container ${REDIS_NAME}
+assert_docker_container ${REDIS_NAME}
 configure_systemd ${REDIS_NAME} "docker-container@${NGINX_LENTENCRYPT_NAME}.service" "docker-container@${NGINX_LENTENCRYPT_NAME}.service"
 enable_systemd ${REDIS_NAME}

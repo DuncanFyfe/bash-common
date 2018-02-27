@@ -10,8 +10,8 @@ export SCRIPT_DIR=$(dirname $SCRIPT)
 . $SCRIPT_DIR/config.sh
 cd $SCRIPT_DIR
 
-#assert_container $REDIS_NAME
-#assert_container $POSTGRES_NAME
+#assert_docker_container $REDIS_NAME
+#assert_docker_container $POSTGRES_NAME
 
 # Local Configuration
 hostdata="$GITLAB_ROOT/data"
@@ -47,6 +47,6 @@ docker run --name $GITLAB_NAME --log-driver=journald \
   --volume $registry:/var/opt/registry \
   -d ${GITLAB_DOCKER_IMAGE}
 
-assert_container $GITLAB_NAME
+assert_docker_container $GITLAB_NAME
 #configure_systemd $GITLAB_NAME "docker.service" "docker.service"
 #enable_systemd $GITLAB_NAME

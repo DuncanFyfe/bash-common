@@ -1,4 +1,46 @@
+# This is a bash library of useful functions.
+# Index:
+#      debug
+#      debugenv
+#      debug_begin
+#      debug_end
+#      error
+#      assert_var
+#      assert_file
+#      assert_directory
+#      assert_exists
+#      assert_user
+#      assert_group
+#      makedir
+#      make_password
+#      add_password
+#      join_by
+#      first_of
+#      getipaddr4
+#      get_dist
+#      get_pernode_dist
+#      get_build
+#      get_pernode_build
+#      get_lib
+#      get_pernode_lib
+#      get_config
+#      get_pernode_config
+#      load
+#      load_pernode
+#      get_template
+#      get_pernode_template
+#      find_template
+#      template_substitution
+#      copy_template
+#      make_timestamp
+#      get_timestamp
+#      withsudo
+#      distcheck
+#      forceddelete
+
+#
 function debug {
+  # Arguments: debug message strings
   # If LOG_LEVEL contains the substring "DEBUG" _AND_
   # (DEBUG==ALL _OR_ DEBUG contains the scriptname as a substring)
   # then echo the debug message.
@@ -11,7 +53,9 @@ function debug {
 }
 
 function debugenv {
-  # Arguments message_tag variable_name(s)
+  # Arguments: variable_name(s)
+  # If debugging is active echo the variable names and their
+  # environment variable values.
   if [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ]; then
     for _e in $@; do
       eval _v=\$${_e}
@@ -21,20 +65,22 @@ function debugenv {
 }
 
 function debug_begin {
+  # Arguments: sero or more supplimentary messages
   # Issue a debug identifier at the beginning of a script.
-  # This should bne used as a copy and paste template as you probably want it to
-  # run before this library is loaded.
-  [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "#BEGIN SCRIPT $SCRIPT_NAME ${@:1}"
+  # This should be used as a copy and paste template as you
+  # probably want it to run before this library is loaded.
+  [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "#DEBUG[$SCRIPT_NAME] BEGIN SCRIPT ${@:1}"
 }
 
 function debug_end {
+  # Arguments: Zero or more supplimentary messages
   # Convenience function to issue a debug identifier at the end of a script.
   # The begining of a script is identified before this library is loaded.
-  debug "#END SCRIPT $SCRIPT_NAME ${@:1}"
+  debug "#DEBUG[$SCRIPT_NAME] END SCRIPT ${@:1}"
 }
 
 function error {
-  # error status error message strings...
+  # Arguments: status error [zero or more message strings]
   # Echo any given given error message and exit with the given status.
   # A default error status and message are used where either is not given.
   local _status=$1
@@ -46,6 +92,7 @@ function error {
 }
 
 function assert_var {
+  # Arguments: one environment variable name
   # Test if the given environment variable is defined and of non-zero length
   # Exit with status $ERR_ASSERT_VAR if it is not.
   local _var="$1"
@@ -57,6 +104,7 @@ function assert_var {
 }
 
 function assert_file {
+  # Arguments: one filename with path relative to $CWD.
   # Test if the given path is a filename and exists
   # Exit with status $ERR_ASSERT_FILE if it is not.
   local _f="$1"
@@ -67,6 +115,7 @@ function assert_file {
 }
 
 function assert_directory {
+  # Arguments: one directory with path relative to $CWD.
   # Test if the given path is a directory and exists
   # Exit with status $ERR_ASSERT_DIRECTORY if it is not.
   local _f="$1"
@@ -77,6 +126,7 @@ function assert_directory {
 }
 
 function assert_exists {
+  # Arguments: one filesystem path relative to $CWD.
   # Test if the given path exists (but we don't care what it is)
   # Exit with status $ERR_ASSERT_VAR if it is not.
   local _f="$1"
@@ -87,6 +137,7 @@ function assert_exists {
 }
 
 function assert_user {
+  # Arguments: one system user name.
   # Test if the given group exists (but we don't care what it is)
   # Exit with status $ERR_ASSERT_USER  if it is not.
   local _u="$1"
@@ -99,6 +150,7 @@ function assert_user {
 }
 
 function assert_group {
+  # Arguments: one system group name.
   # Test if the given user exists (but we don't care what it is)
   # Exit with status $ERR_ASSERT_GROUP if it is not.
   local _g="$1"
@@ -111,6 +163,7 @@ function assert_group {
 }
 
 function makedir {
+  # Arguments: one directory with path relative to $CWD.
   # Create a directory path then verify that is was created.
   local _d="$1"
   debugenv "makedir" _d
@@ -123,12 +176,12 @@ function makedir {
 }
 
 function make_password {
-  # Arguments variable int
+  # Arguments: one variable_name and zero or one integer
   # Use openssl to generate a password of base64 characters.
   local _var=$1
   assert_var _var
   local _len=${2:-32}
-  local $_val=$(openssl rand -base64 $_len | tr -d '[:space:]' | head -c${1:-${$_len}})
+  local _val=$(openssl rand -base64 $_len | tr -d '[:space:]' | head -c$_len)
   eval "export ${_var}=${_val}"
 }
 
@@ -173,10 +226,10 @@ function first_of {
   local _var=$1
   for _e in ${@:2}; do
     echo "_e=$_e"
-      if [ -e $_e ]; then
-        eval "export ${_var}=${_e}"
-        break
-      fi
+    if [ -e $_e ]; then
+      eval "export ${_var}=${_e}"
+      break
+    fi
   done
 }
 
@@ -197,9 +250,10 @@ function getipaddr4 {
 
 function get_dist {
   # Arguments: variable_name section extras
-  # Get an export path to the given section item.
-  # The export path is a directory or file for common output we expect to be
-  # able to export (copy) to more than one machine (ie. it is not node specific)
+  # Get an distribution path to the given section item.
+  # The distribution path is a directory or file for common output
+  # we expect to be able to export (copy) to more than one machine
+  # It MUST not be node specific.
   assert_var DIST_ROOT
   local _var=$1
   assert_var _var
@@ -212,20 +266,22 @@ function get_dist {
 
 function get_pernode_dist {
   # Arguments: variable_name nodename extras
-  # Get an export path to the given node.
-  # The export path is a directory or file for node-specific output we expect
-  # to be able to export (copy) to the given node.
+  # Get an distribution path for the given node.
+  # The distribution path is a directory or file for
+  # node-specific output we expect to be able to export (copy)
+  # to the given node.
+  # The content MUST be node specific.
   get_dist $1 'nodes' ${@:2}
 }
 
 function get_build {
   # Arguments: variable_name section extras
   # Get a build path to the given section item.
-  # The export path is a directory or file for common output we expect to be
-  # able to export (copy) to more than one machine (ie. it is not node specific)
-  #
-  # NB BUILD_PATH is where to put executables, get_build is a path to
-  # a build resource.
+  # The build path is a directory or file for output being
+  # created by the build process.
+  # It MUST not be node specific.
+  #  This build path should conta
+
 
   assert_var BUILD_ROOT
   local _var=$1
@@ -242,6 +298,7 @@ function get_pernode_build {
   # Get an export path to the given node.
   # The export path is a directory or file for node-specific output we expect
   # to be able to export (copy) to the given node.
+  # It MUST be node specific.
   get_build $1 'nodes' ${@:2}
 }
 
@@ -300,19 +357,25 @@ function get_pernode_config {
 }
 
 function load {
+  # Arguments: library_section zero or molre additional sub-levels
+  # Source a shell common library and library configuration file.
   local _load_lib
   local _load_config
   get_lib _load_lib $@
   if [ -f "$_load_lib" ]; then
+    echo "Found _load_lib=$_load_lib"
     . $_load_lib
   fi
   get_config _load_config $@
   if [ -f "$_load_config" ]; then
+    echo "Found _load_config=$_load_config"
     . $_load_config
   fi
 }
 
 function load_pernode {
+  # Arguments: node_name library_section zero or molre additional sub-levels
+  # Source a per-node shell common library and library configuration file.
   local _load_lib
   local _load_config
   get_pernode_lib _load_lib $@
@@ -442,18 +505,45 @@ function withsudo {
   #
   local _sudo=${SUDO_PATH:-'/usr/bin/sudo'}
   if [ "$(id -u)" != "0" ]; then
-      [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "RESTARTING SCRIPT WITH SUDO: $_sudo $0 $@"
-      exec $_sudo $0 $@
+    [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "RESTARTING SCRIPT WITH SUDO: $_sudo $0 $@"
+    exec $_sudo $0 $@
   fi
 }
 
 function distcheck {
-  # Get the timestamp creating one if needed.
+  # Arguments: None
+  # Get a Linux distribution identification string.
   local _var=$1
   assert_var _var
   local _dist=$2
   local _val=$(uname -a | grep -c $_dist)
   eval "export ${_var}=${_val}"
+}
+
+function forceddelete {
+  # Arguments: One or more filesystem paths.
+  # Force the deletion of a directory or files
+  # with some sanity checks.
+  local _loc
+  for _loc in $@; do
+    debug "Testing $_loc"
+    if [ "X$_loc" != "X" -a -e $_loc ]; then
+      _rloc=$(realpath $_loc)
+      local _ok="TRUE"
+      # Do not delete if $_loc is on this list.
+      # No this isn't a complete sanity check but it helps.
+      for chk in "X" "X/" "X$HOME"; do
+        if [ "X$_rloc" = $chk ]; then
+          _ok="FALSE"
+          break
+        fi
+      done
+      if [ $ok = "TRUE"  ]; then
+        debug "Deleting $_loc"
+        rm -rf $_loc
+      fi
+    fi
+  done
 }
 # ERROR EXIT STATUSES
 ERR_CA_UNCLEAN=1
@@ -469,4 +559,6 @@ ERR_COMMON_NAME=21
 ERR_VERIFY_CA=22
 ERR_NO_CONTAINER=23
 ERR_BAD_CONTAINER=24
+ERR_NO_VOLUME=25
+ERR_BAD_VOLUME=26
 ERR_UNKNOWN=99

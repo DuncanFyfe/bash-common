@@ -1,10 +1,12 @@
 #!/bin/bash
+# Target: Ubuntu 16.04
 # Setup a swapfile
-# Setup a non-root admin user (passwordless sudo access)
+# Setup a non-root admin user (with passwordless sudo access)
 # Enable the firewall with an OpenSSH hole.
 #
-# This script must only be run on a target host and execute as root.
-# This script is deliberately stand alone.
+# This script must only be copied to a target host and execute as root.
+# This script is deliberately stand alone without any dependence on bash_common
+# libraries.
 
 export SCRIPT=$(readlink -f "$0")
 export SCRIPT_DIR=$(dirname $SCRIPT)

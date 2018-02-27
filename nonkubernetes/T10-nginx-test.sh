@@ -32,7 +32,7 @@ if [ ! -f "$passwdfile" ]; then
   assert_file $passwdfile
 fi
 
-assert_container $NGINX_LENTENCRYPT_NAME
+assert_docker_container $NGINX_LENTENCRYPT_NAME
 rm_container $NGINX_TEST_NAME
 
 docker run --name $NGINX_TEST_NAME --log-driver=journald \

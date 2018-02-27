@@ -16,8 +16,8 @@ load 'nginx-proxy' 'nginx-proxy.sh'
 cd $SCRIPT_DIR
 
 assert_directory $NGINX_PROXY_ROOT/certs
-assert_container $NGINX_PROXY_NAME
-assert_container $NGINX_GEN_NAME
+assert_docker_container $NGINX_PROXY_NAME
+assert_docker_container $NGINX_GEN_NAME
 systemctl stop "docker-container@${NGINX_LENTENCRYPT_NAME}.service"
 rm_container $NGINX_LENTENCRYPT_NAME
 

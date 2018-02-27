@@ -5,8 +5,7 @@ export SCRIPT_NAME=$(basename $SCRIPT)
 [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "SCRIPT BEGIN $SCRIPT_NAME ${@:1}"
 . $SCRIPT_DIR/project.sh
 
-install_path=${INSTALL_PATH}
-install_path=${install_path:-"$HOME/bin"}
+install_path=${INSTALL_PATH:-"$HOME/bin"}
 if [ ! -d ${install_path} ]; then
   mkdir -p ${install_path}
 fi

@@ -16,6 +16,8 @@ function get_ca_config_json {
 }
 
 function get_certificate_file_names {
+  # Arguments: root_of_variable_name_to_receive_names name location
+  #    zero_or_more_other_name_components
   # Get the names of certificate files to make it easy to find them.
   # Naming convention:
   # Certificate authority files using the certificate authority name.
@@ -88,7 +90,7 @@ function assert_ca {
 
 function assert_certificate {
   # Arguments: certificate_name ca_name
-  # Test if the certificates found suing the certificate_name were signed
+  # Test if the certificates found using the certificate_name were signed
   # by the named CA.
   local _cert_name=$1
   assert_var _cert_name
