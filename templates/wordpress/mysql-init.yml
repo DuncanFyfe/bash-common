@@ -1,0 +1,20 @@
+version: '3.3'
+services:
+  mysql:
+    env_file:
+    - site.env
+    image: ${MYSQL_IMAGE}
+    restart: always
+    volumes:
+      - mysql_v:/var/lib/mysql
+  adminer:
+    env_file:
+    - site.env
+    depends_on:
+     - mysql
+    image: ${ADMINER_IMAGE}
+    restart: always
+    ports:
+      - 8081:8080
+volumes:
+  mysql_v:
