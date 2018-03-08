@@ -47,7 +47,7 @@ function debug {
   if [ "X${LOG_LEVEL#*DEBUG}" != "X$LOG_LEVEL" ]; then
     if [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ]; then
       local _tag=$SCRIPT_NAME
-      echo "#DEBUG[$_tag] $@"
+      echo "#DEBUG[$_tag] $@" 1>&2
     fi
   fi
 }
@@ -59,7 +59,7 @@ function debugenv {
   if [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ]; then
     for _e in $@; do
       eval _v=\$${_e}
-      echo "#DEBUG[$SCRIPT_NAME] ${_e}=${_v}"
+      echo "#DEBUG[$SCRIPT_NAME] ${_e}=${_v}" 1>&2
     done
   fi
 }
@@ -69,7 +69,7 @@ function debug_begin {
   # Issue a debug identifier at the beginning of a script.
   # This should be used as a copy and paste template as you
   # probably want it to run before this library is loaded.
-  [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "#DEBUG[$SCRIPT_NAME] BEGIN SCRIPT ${@:1}"
+  [ "X$DEBUG" = "XALL" -o "X${DEBUG#*$SCRIPT_NAME}" != "X$DEBUG" ] && echo "#DEBUG[$SCRIPT_NAME] BEGIN SCRIPT ${@:1}" 1>&2
 }
 
 function debug_end {
@@ -87,7 +87,7 @@ function error {
   _status=${_status:-$ERR_UNKNOWN}
   local _errmsg="${@:2}"
   _errmsg=${_errmsg:="Exist Status $_status"}
-  echo "#ERROR[$SCRIPT_NAME] $_errmsg"
+  echo "#ERROR[$SCRIPT_NAME] $_errmsg" 1>&2
   exit $_status
 }
 
@@ -363,12 +363,12 @@ function load {
   local _load_config
   get_lib _load_lib $@
   if [ -f "$_load_lib" ]; then
-    echo "Found _load_lib=$_load_lib"
+    debug "Found _load_lib=$_load_lib"
     . $_load_lib
   fi
   get_config _load_config $@
   if [ -f "$_load_config" ]; then
-    echo "Found _load_config=$_load_config"
+    debug "Found _load_config=$_load_config"
     . $_load_config
   fi
 }
