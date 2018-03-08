@@ -1,0 +1,33 @@
+#!/bin/bash -x
+# I have a HiDPI laptop.  This script rescales gnome3 and firefox
+# so make it usable when moving between 1080 monitor and HiDPI-laptop screen.
+#
+# The script toggles between scale factors 1 (1080 monitor) and 2 (HiDPI)
+
+MOZPREF=$(ls ~/.mozilla/firefox/*.default*/prefs.js)
+MOZBAK="$MOZPREF.bak"
+MOZSETTING="layout.css.devPixelsPerPx"
+cur=$(gsettings get org.gnome.settings-daemon.plugins.xsettings overrides | sed 's/[^0-9]*//g')
+echo "Current Gnome Setting $cur"
+mozcur=$(grep $MOZSETTING $MOZPREF | sed 's/[^0-9]*//g')
+echo "Currrent Mozilla Setting $mozcur"
+echo "MOZPREF=$MOZPREF"
+echo "MOZBAK=$MOZBAK"
+
+cp "$MOZPREF" "$MOZBAK"
+if [ "X$cur" = "X2" ]; then
+	echo "Changing  2 to 1"
+	gsettings set org.gnome.settings-daemon.plugins.xsettings overrides "[{'Gdk/WindowScalingFactor', <1>}]"
+	gsettings set org.gnome.desktop.interface scaling-factor 1
+	sed -i -e's/user_pref("layout.css.devPixelsPerPx", "2");/user_pref("layout.css.devPixelsPerPx", "1");/' $MOZPREF
+
+elif [ "X$cur" = "X1" ]; then
+	gsettings set org.gnome.settings-daemon.plugins.xsettings overrides "[{'Gdk/WindowScalingFactor', <2>}]"
+	gsettings set org.gnome.desktop.interface scaling-factor 2
+	sed -i -e's/user_pref("layout.css.devPixelsPerPx", "1");/user_pref("layout.css.devPixelsPerPx", "2");/' $MOZPREF
+	echo "Changing  2 to 1"
+
+else
+	SCALE=0
+  echo "ERROR: Only current settings of 1 or 2 are understood.  Exiting."
+fi
